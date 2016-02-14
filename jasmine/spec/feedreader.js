@@ -35,7 +35,7 @@ $(function() {
         for (var x = 0; x < allFeeds.length; x++) {
             test_url(x);
             test_name(x);
-        };
+        }
 
         /* Test that feed url is defined
          * and that the URL is not empty.
@@ -43,9 +43,9 @@ $(function() {
         function test_url(feedID) {
             it('Feed ' + allFeeds[feedID].name + ' has an URL that is defined', function() {
                 expect(allFeeds[feedID].url).toBeDefined();
-                expect(allFeeds[feedID].url).not.toBe(0);
+                expect(allFeeds[feedID].url.length).not.toBe(0);
             });
-        };
+        }
 
         /* Test that feed name is defined
          * and that the name is not empty.
@@ -53,9 +53,9 @@ $(function() {
         function test_name(feedID) {
             it('Feed ' + allFeeds[feedID].name + ' has a name that is defined', function() {
                 expect(allFeeds[feedID].name).toBeDefined();
-                expect(allFeeds[feedID].name).not.toBe(0);
+                expect(allFeeds[feedID].name.length).not.toBe(0);
             });
-        };
+        }
 
     });
 
@@ -107,11 +107,12 @@ $(function() {
     describe('New Feed Selection', function() {
 
         /* Set feed ID as variable for easy change.
-         * Can also be set to 0 for fail
+         * 1 (CSS tricks), seems too slow for call back so start
+         * at 2 (HTML Rocks)
          */
-        var n = 1;
-        var oldContent;
-        var newContent;
+        var n = 2,
+            oldContent,
+            newContent;
 
         /* Test that ensures when a new feed is loaded
          * by loadFeed() that the content actually changes.
@@ -119,17 +120,20 @@ $(function() {
          * and asynchronous done() function.
          */
         beforeEach(function(done) {
-            /* Keep the content already on the page to compare
-             * with new one
-             */
-            oldContent = $('.feed').text();
-
+            /* Get the content for feed(n) */
             loadFeed(n, function() {
-                /* Get new content on the page to compare*/
-                newContent = $('.feed').text();
-                done();
+                oldContent = $('.feed').text();
+                /* Display on console to check */
+                console.log(oldContent);
+                /* Get the content for feed(n+1) */
+                loadFeed(n+1, function() {
+                    newContent = $('.feed').text();
+                    /* Display on console to check */
+                    console.log(newContent);
+                    /* All feeds received, call done() */
+                    done();
+                });
             });
-
         });
 
         it('a new feed is loaded', function() {
